@@ -3,6 +3,21 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Local development and planning files
+.idea/
+.python/
+.uv-cache/
+.superpowers/
+docs/superpowers/
+
+# Generated exercise artifacts
+Exercises.txt
+Answers.txt
+Grade.txt
+
+# Profiling artifacts
+*.prof
+
 # C extensions
 *.so
 
