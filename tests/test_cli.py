@@ -84,6 +84,19 @@ class GenerationCliTests(unittest.TestCase):
                         main(arguments)
                 self.assertEqual(raised.exception.code, 2)
 
+    def test_exhausted_generation_keeps_existing_output_files(self):
+        with temporary_working_directory():
+            Path("Exercises.txt").write_text("old exercises\n", encoding="utf-8")
+            Path("Answers.txt").write_text("old answers\n", encoding="utf-8")
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                exit_code = main(["-n", "1000", "-r", "1"])
+            exercise_text = Path("Exercises.txt").read_text(encoding="utf-8")
+            answer_text = Path("Answers.txt").read_text(encoding="utf-8")
+
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(exercise_text, "old exercises\n")
+        self.assertEqual(answer_text, "old answers\n")
+
 
 class GradingCliTests(unittest.TestCase):
     """Protect grading-mode dispatch and safe Grade.txt writes."""

@@ -70,6 +70,17 @@ class GeneratorTests(unittest.TestCase):
         second = generate_exercises(20, 10, random.Random(99))
         self.assertEqual(first, second)
 
+    def test_generates_ten_thousand_unique_exercises(self):
+        exercises = generate_exercises(10000, 50, random.Random(20260921))
+        keys = [canonical_key(item.expression) for item in exercises]
+
+        self.assertEqual(len(keys), 10000)
+        self.assertEqual(len(set(keys)), 10000)
+        self.assertTrue(all(constraints_hold(item.expression) for item in exercises))
+        self.assertTrue(
+            all(1 <= operator_count(item.expression) <= 3 for item in exercises)
+        )
+
     def test_invalid_arguments_are_rejected(self):
         invalid_cases = ((0, 10), (-1, 10), (10, 0), (10, -1))
         for count, value_range in invalid_cases:

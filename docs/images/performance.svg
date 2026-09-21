@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+<rect width="960" height="540" fill="#f8fafc"/>
+<text x="480" y="38" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#0f172a">生成耗时随题量增长趋势</text>
+<line x1="90" y1="460.00" x2="920" y2="460.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="465.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.0000</text>
+<line x1="90" y1="382.00" x2="920" y2="382.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="387.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.0627</text>
+<line x1="90" y1="304.00" x2="920" y2="304.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="309.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.1253</text>
+<line x1="90" y1="226.00" x2="920" y2="226.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="231.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.1880</text>
+<line x1="90" y1="148.00" x2="920" y2="148.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="153.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.2507</text>
+<line x1="90" y1="70.00" x2="920" y2="70.00" stroke="#cbd5e1" stroke-width="1"/>
+<text x="78" y="75.00" text-anchor="end" font-family="sans-serif" font-size="13" fill="#475569">0.3134</text>
+<line x1="90" y1="460" x2="920" y2="460" stroke="#334155" stroke-width="2"/>
+<line x1="90" y1="70" x2="90" y2="460" stroke="#334155" stroke-width="2"/>
+<polyline points="90.00,459.54 366.67,456.26 643.33,430.40 920.00,120.87" fill="none" stroke="#2563eb" stroke-width="3"/>
+<circle cx="90.00" cy="459.54" r="6" fill="#2563eb"/>
+<text x="90.00" y="486" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#334155">10</text>
+<text x="90.00" y="447.54" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4ed8">0.0004s</text>
+<circle cx="366.67" cy="456.26" r="6" fill="#2563eb"/>
+<text x="366.67" y="486" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#334155">100</text>
+<text x="366.67" y="444.26" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4ed8">0.0030s</text>
+<circle cx="643.33" cy="430.40" r="6" fill="#2563eb"/>
+<text x="643.33" y="486" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#334155">1,000</text>
+<text x="643.33" y="418.40" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4ed8">0.0238s</text>
+<circle cx="920.00" cy="120.87" r="6" fill="#2563eb"/>
+<text x="920.00" y="486" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#334155">10,000</text>
+<text x="920.00" y="108.87" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4ed8">0.2725s</text>
+<text x="505.00" y="515" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#334155">题目数量（对数刻度）</text>
+<text x="24" y="265.00" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#334155" transform="rotate(-90 24 265.00)">生成耗时（秒）</text>
+</svg>
