@@ -7,6 +7,7 @@ from typing import Optional, Sequence
 
 from arithmetic.expression import format_expression
 from arithmetic.generator import QuestionSpaceExhausted, generate_exercises
+from arithmetic.grader import ExerciseFileError, format_grade, grade_files
 from arithmetic.numbers import format_number
 
 
@@ -22,7 +23,11 @@ def build_parser() -> argparse.ArgumentParser:
         prog="Myapp",
         description="自动生成并批改小学四则运算题目",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="示例:\n  python main.py -n 10 -r 10",
+        epilog=(
+            "示例:\n"
+            "  python main.py -n 10 -r 10\n"
+            "  python main.py -e Exercises.txt -a Answers.txt"
+        ),
     )
     parser.add_argument(
         "-n",
@@ -38,6 +43,8 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="R",
         help="叶子数值和分母的范围上界，生成模式必须提供",
     )
+    parser.add_argument("-e", default=None, metavar="FILE", help="待批改的题目文件")
+    parser.add_argument("-a", default=None, metavar="FILE", help="待检查的答案文件")
     return parser
 
 
@@ -84,11 +91,37 @@ def run_generation(
     return 0
 
 
+def run_grading(arguments: argparse.Namespace) -> int:
+    """Grade a complete pair of input files and write Grade.txt on success."""
+
+    try:
+        result = grade_files(arguments.e, arguments.a)
+        grade_text = format_grade(result)
+    except (OSError, UnicodeError, ExerciseFileError) as error:
+        print("错误: {}".format(error), file=sys.stderr)
+        return 1
+
+    try:
+        Path(GRADE_FILE).write_text(grade_text, encoding="utf-8")
+    except OSError as error:
+        print("错误: 无法写入 {}: {}".format(GRADE_FILE, error), file=sys.stderr)
+        return 1
+
+    print("批改完成，结果已写入 {}。".format(GRADE_FILE))
+    return 0
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Parse arguments and run the selected operation."""
 
     parser = build_parser()
     arguments = parser.parse_args(argv)
+    if arguments.e is not None or arguments.a is not None:
+        if arguments.e is None or arguments.a is None:
+            parser.error("-e 和 -a 必须同时提供")
+        if arguments.n is not None or arguments.r is not None:
+            parser.error("批改模式不能与生成参数混用")
+        return run_grading(arguments)
     return run_generation(arguments, parser)
 
 

@@ -85,5 +85,74 @@ class GenerationCliTests(unittest.TestCase):
                 self.assertEqual(raised.exception.code, 2)
 
 
+class GradingCliTests(unittest.TestCase):
+    """Protect grading-mode dispatch and safe Grade.txt writes."""
+
+    def test_grading_writes_exact_result_from_unicode_paths(self):
+        with temporary_working_directory(prefix="批改命令-") as directory:
+            input_directory = directory / "中文输入"
+            input_directory.mkdir()
+            exercises = input_directory / "题目.txt"
+            answers = input_directory / "作答.txt"
+            exercises.write_text(
+                "1. 1/6 + 1/8 =\n2. 3 - 1 =\n3. 1 ÷ 2 =\n",
+                encoding="utf-8",
+            )
+            answers.write_text("1. 7/24\n2. 3\n3. 1/2\n", encoding="utf-8")
+
+            with redirect_stdout(io.StringIO()):
+                exit_code = main(["-e", str(exercises), "-a", str(answers)])
+            grade_text = Path("Grade.txt").read_text(encoding="utf-8")
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(grade_text, "Correct: 2 (1, 3)\nWrong: 1 (2)\n")
+
+    def test_grading_requires_both_file_arguments(self):
+        for arguments in (["-e", "e.txt"], ["-a", "a.txt"]):
+            with self.subTest(arguments=arguments):
+                error_output = io.StringIO()
+                with redirect_stderr(error_output):
+                    with self.assertRaises(SystemExit) as raised:
+                        main(arguments)
+                self.assertEqual(raised.exception.code, 2)
+                self.assertIn("-e 和 -a 必须同时提供", error_output.getvalue())
+
+    def test_grading_rejects_generation_arguments(self):
+        cases = (
+            ["-e", "e.txt", "-a", "a.txt", "-n", "2"],
+            ["-e", "e.txt", "-a", "a.txt", "-r", "10"],
+        )
+        for arguments in cases:
+            with self.subTest(arguments=arguments):
+                error_output = io.StringIO()
+                with redirect_stderr(error_output):
+                    with self.assertRaises(SystemExit) as raised:
+                        main(arguments)
+                self.assertEqual(raised.exception.code, 2)
+                self.assertIn("批改模式不能与生成参数混用", error_output.getvalue())
+
+    def test_broken_exercise_does_not_replace_existing_grade(self):
+        with temporary_working_directory():
+            Path("Exercises.txt").write_text("1. 1 + =\n", encoding="utf-8")
+            Path("Answers.txt").write_text("1. 1\n", encoding="utf-8")
+            Path("Grade.txt").write_text("previous result\n", encoding="utf-8")
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                exit_code = main(["-e", "Exercises.txt", "-a", "Answers.txt"])
+            grade_text = Path("Grade.txt").read_text(encoding="utf-8")
+
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(grade_text, "previous result\n")
+
+    def test_missing_input_file_returns_error_without_grade(self):
+        with temporary_working_directory():
+            Path("Answers.txt").write_text("1. 1\n", encoding="utf-8")
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                exit_code = main(["-e", "missing.txt", "-a", "Answers.txt"])
+            grade_exists = Path("Grade.txt").exists()
+
+        self.assertEqual(exit_code, 1)
+        self.assertFalse(grade_exists)
+
+
 if __name__ == "__main__":
     unittest.main()
